@@ -1,13 +1,10 @@
 
 # Favorite Quotes, Emailed Daily
-
-Favorite Quotes, Emailed Daily
-
-### How to build an AWS Lambda Function to email yourself a daily quote
+## How to build an AWS Lambda Function to email yourself a daily quote
 
 My wife said I was spamming her too much. She wasn’t wrong. In a polite way she asked if I could reduce my automated emails from daily to weekly. Trying not to be offended, I decided to use it as an opportunity to revisit my original project, document it, then share it as a blog post. What I had created was a python script to email myself a random quote every morning. This was at ends with my inbox(0) mentality but a good way to serendipitously start each workday. The quotes came from a google sheet, which I continuously added my Kindle highlights to over time. If you’ve come this far and are interested in replicating or building on my approach, feel free to follow the steps below!
 
-## Creating a google sheet with quotes
+### Creating a google sheet with quotes
 
 Before we get to the juicy python part, you need a google sheet full of your favorite quotes! To make it easy you can copy my sheet [here](https://docs.google.com/spreadsheets/d/19oZOiB7MlgPzrNh_4ctm1QYoQi9miJu6kvcOiQJNT0Y/edit?usp=sharing).
 
@@ -19,7 +16,7 @@ It’s always fun to see how a younger version of yourself interpreted a quote.
 
 I titled the workbook ‘**Daily Quote Email**’ and the worksheet ‘**Quotes**’ — both of which will be referenced in our script.
 
-## Using a virtual environment
+### Using a virtual environment
 
 Your future self will thank you for using a virtual environment whenever possible. It helps to keep code contained and make it more replicable since all the dependencies and site packages are in one place. People set up virtual environments numerous ways, but here are the commands I follow:
 
@@ -48,11 +45,11 @@ Your future self will thank you for using a virtual environment whenever possibl
 
     (venv) $ pip install gspread
 
-## Connecting to the Google Sheets API
+### Connecting to the Google Sheets API
 
 Instead of using the [Google Sheets API](https://developers.google.com/sheets/api/quickstart/python) directly, I used [gspread](https://gspread.readthedocs.io/en/latest/index.html), which is a Python API wrapper for Google sheets. Their documentation is very clear, but I will add some commentary to make it more enjoyable.
 
-### Obtain OAuth Credentials Using Signed Credentials
+#### Obtain OAuth Credentials Using Signed Credentials
 
 Since we are editing spreadsheets for ourselves and not others, the easiest way to generate credentials is to use *Signed Credentials.*
 
@@ -95,7 +92,7 @@ Finally, we need to install the oauth2client in our virtual environment:
 
     (venv) $ pip install --upgrade oauth2client
 
-## Writing Python Script
+### Writing Python Script
 
 Alas, we have arrived to the meat and bones of the project. Thank you for your patience up until now. If you have skipped ahead and are just joining me now, welcome.
 
@@ -113,17 +110,17 @@ At a high level, this python script will:
 
 Let’s dive into it.
 
-### Import modules
+#### Import modules
 
 The first step is to import our modules. Aside from gspread and oauth2client, we will need smtplib to send the email and randomint to generate a random number. If these aren’t in your standard python library, then you can install them in the virtual environment with pip.
 
-    **import** gspread
-    **from** oauth2client.service_account **import** ServiceAccountCredentials
-    **from** random **import** randint
-    **from** httplib2 **import** Http
-    **import** smtplib
+    import gspread
+    from oauth2client.service_account **import** ServiceAccountCredentials
+    from random import randint
+    from httplib2 import Http
+    import smtplib
 
-### Read in credentials from json file
+##### Read in credentials from json file
 
 Next we use our credentials to create a client to interact with the Google Sheets API. To be safe, let’s give it access to both google sheets directly and our drive more broadly.
 
@@ -131,20 +128,20 @@ Next we use our credentials to create a client to interact with the Google Sheet
             'https://www.googleapis.com/auth/drive']
     credentials = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
 
-### Authorize gspread to access our google sheet
+#### Authorize gspread to access our google sheet
 
 Connect to google sheets and authorize the credentials with the gspread.authorize()method.
 
     gc = gspread.authorize(credentials)
 
-### Select a worksheet
+#### Select a worksheet
 
 Open our workbook with gc.open()and then call the sheet by title. I named my google sheet **Daily Quote Email** and the worksheet **Quotes**.
 
     wks = gc.open("Daily Quote Email")
     sheet = wks.worksheet("Quotes")
 
-### Generate random number
+#### Generate random number
 
 We’ll use one column to get the length of the sheet. If you have a sheet with 15 rows filled out then it will be 16 (15 plus the column name). If you have 250 rows filled out then the length will be 251.
 
@@ -153,7 +150,7 @@ Let’s save it into a variable ‘x’ so we can use it as the upper bound for 
     x = len(sheet.col_values(1))
     randomRow = randint(0,x)
 
-### Get cell values
+#### Get cell values
 
 After we’ve selected a random row, we will read the cell values for each column. This includes the book title, the quote and the key takeaway. Save these into their own variables so we can call them in the email.
 
@@ -161,7 +158,7 @@ After we’ve selected a random row, we will read the cell values for each colum
     quote = sheet.cell(randomRow, 3).value
     kt = sheet.cell(randomRow, 4).value
 
-### Open SMTP connection
+#### Open SMTP connection
 
 Next comes the outbound email to yourself. [I recommend using SMTP and gmail to handle this](https://stackabuse.com/how-to-send-emails-with-gmail-using-python/). Create an insecure connection and then upgrade to TLS. This is done using the .starttls() method.
 
@@ -169,7 +166,7 @@ Next comes the outbound email to yourself. [I recommend using SMTP and gmail to 
     smtpObj.ehlo()
     smtpObj.starttls()
 
-### Authenticate with gmail
+#### Authenticate with gmail
 
 You just need your email and password. However, if you have 2-step verification enabled (hopefully you do), then you may need an app specific password.
 
@@ -178,7 +175,7 @@ You just need your email and password. However, if you have 2-step verification 
 
     smtpObj.login(gmail_user, gmail_password)
 
-### Create the email
+#### Create the email
 
 Once authenticated, we insert our variables from above into the body.
 
@@ -186,7 +183,7 @@ Once authenticated, we insert our variables from above into the body.
     to = ['me@gmail.com']
     body = 'Subject: Daily Quote\n\n %s\n %s\n %s' % (book, quote, kt)
 
-### Sending the email
+#### Sending the email
 
 Final step is to call the .sendmail() method with the fields we filled out above. At the end I recommend ending the connection.
 
@@ -199,11 +196,11 @@ Final step is to call the .sendmail() method with the fields we filled out above
 
 Our final script should look like this:
 
-    **import** gspread
-    **from** oauth2client.service_account **import** ServiceAccountCredentials
-    **from** random **import** randint
-    **from** httplib2 **import** Http
-    **import** smtplib
+    import gspread
+    from oauth2client.service_account import ServiceAccountCredentials
+    from random import randint
+    from httplib2 import Http
+    import smtplib
 
     scope = ['https://spreadsheets.google.com/feeds',
             'https://www.googleapis.com/auth/drive']
@@ -241,11 +238,11 @@ Our final script should look like this:
 
     smtpObj.quit()
 
-## Turning script into daily lambda function on AWS
+### Turning script into daily lambda function on AWS
 
 Great job so far! Now that we have the script working locally on our machine, we are going to turn it into an AWS Lambda Function so we can run it daily from the cloud.
 
-### Create Function
+#### Create Function
 
 Sign in to AWS and head to the Lambda Management Console. Choose Create Function and select the Author From Scratch option.
 
@@ -255,7 +252,7 @@ Give your function a name that is somewhat descriptive then select Python 3.6 fo
 
 ![](https://cdn-images-1.medium.com/max/2000/1*URmgQWt6vVltI0SIaWNtVQ.png)
 
-### Configure Trigger
+#### Configure Trigger
 
 While configuring the function we will add a trigger from the predefined list. We are going to choose CloudWatch Events to set up our trigger.
 
@@ -265,7 +262,7 @@ After selecting CloudWatch Events we are going to create a new rule and call it 
 
 ![](https://cdn-images-1.medium.com/max/2086/1*P2BxREiy5Pyrq0h7iQT4QQ.png)
 
-### Function Code
+#### Function Code
 
 Next, we are going to upload our function code that we worked on previously. But, before we do that, let’s go back to our script and add one more edit to make so AWS can handle everything on its end.
 
@@ -328,7 +325,7 @@ AWS help describes it as:
 
 ![](https://cdn-images-1.medium.com/max/2078/1*rfBn-dr869NXCL7IN47EvA.png)
 
-### Uploading a Zip File
+#### Uploading a Zip File
 
 This part is a little tricky, but I have found a version that works for me. Please note there could be a better way to do this, so feel free to leave recommendations in the comments.
 
@@ -353,13 +350,13 @@ Back in the AWS console we can now Upload our function package:
 
 ![](https://cdn-images-1.medium.com/max/2000/1*N_iIfmwLVkD7NywSTWFk9g.png)
 
-### Adding Finishing Touches
+#### Adding Finishing Touches
 
 I left Environment variables and Tags blank. Double check that you have the lambda_basic_execution role selected. I’d also recommend adding a 3 sec timeout within basic settings, just in case.
 
 ![](https://cdn-images-1.medium.com/max/2082/1*bhEsJyT-39feMSmVylZerw.png)
 
-### Testing Function
+#### Testing Function
 
 After we save our function, we are ready to test it! Simply click the test button and keep your fingers crossed until you see the following log:
 
@@ -367,7 +364,7 @@ After we save our function, we are ready to test it! Simply click the test butto
 
 If you get the opposite version that is red, I’d recommend revisiting the steps above. If you still can’t figure it out, leave me a note and I will try to answer any specific questions.
 
-## Enjoy your daily email!
+### Enjoy your daily email!
 
 And there you have it. One of your favorite quotes, emailed right to your inbox daily. The best part is you start your day with a new dot to connect. Sometimes the quote will feel timely and relevant to your day ahead, other times it will seem completely random. Either way, it’s a fun daily activity that really gets you reading and highlighting more so you can contribute to your google sheet.
 
