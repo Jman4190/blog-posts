@@ -268,7 +268,7 @@ Next, we are going to upload our function code that we worked on previously. But
 
 We need to select our code and turn it into an AWS Lambda function by adding this line:
 
-    **def** **lambda_handler**(event, context):
+    def lambda_handler(event, context):
 
 With all the code below it selected, tab over once. Your final code should look like this:
 
@@ -343,8 +343,8 @@ With both these files in the site-packages folder, you can zip it.
 
 Zip the files with the following commands (Or right click and zip it).
 
-    $ **cd venv/lib/python3.6/site-packages/**  
-    $ **zip -r9 ../daily_email_aws.zip .**
+    $ cd venv/lib/python3.6/site-packages/  
+    $ zip -r9 ../daily_email_aws.zip .
 
 Back in the AWS console we can now Upload our function package:
 
