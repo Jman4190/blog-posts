@@ -1,8 +1,6 @@
 
 # Say Hello to My Twitter Friend
 
-Say Hello to My Twitter Friend
-
 ### Step-by-step guide to launch a Twitter bot that retweets your favorites
 
 Every day when I launch the blue bird I am flabbergasted by the breadth of conversations taking place and the streams of information being shared, all in some shape or form of 140 characters.
@@ -62,59 +60,57 @@ Heads up that I am using plain old Sublime Text to write these Python scripts. I
 
 The only dependency we will need for this script is Tweepy. To install the Tweepy module, type the following code in your terminal:
 
-    *pip install tweepy*
+    pip install tweepy
 
 I can’t stress how important it is to correctly set up your environment. The amount of time I spent on StackOverflow just trying to learn how to install modules (that in the end could be imported with a measly line of code) was staggering. It wasn’t until I got a new computer that I had a clean slate and second chance to do things the right way (with the help of a friend of course).
 
 Once the dependency is installed we can write our first line of code. Create a new python file in the folder we created earlier. To begin, we need to import the Tweepy library with the following line.
 
-    *import tweepy*
+    import tweepy
 
 Next, let’s drop all of our API information that we stored in the TextEditor into four different variables. Make sure the strings are in quotes.
 
-    *api_key = ‘your_api_key’
+    api_key = ‘your_api_key’
     api_secret = ‘your_api_secret’
     access_token = ‘your_access_token’
-    access_secret = ‘your_access_secret’ *
+    access_secret = ‘your_access_secret’ 
 
 Then, let’s authenticate with Twitter by logging in via code. Create a variable called *auth* for authentication, and use Tweepy’s *OAuthHandler* method. This method takes two arguments, the consumer *api_key* and the consumer *api_secret*. Then we call the *set_access_token* method on the *auth* variable. This method takes two arguments, the *access_token* and the *access_secret*.
 
-    *auth = tweepy.OAuthHandler(api_key, api_secret)
-    auth.set_access_token(access_token, access_secret)*
+    auth = tweepy.OAuthHandler(api_key, api_secret)
+    auth.set_access_token(access_token, access_secret)
 
 You’ll notice we could have directly inserted the strings into the above methods, but what if our API information changes? Using variables is an efficient way to make easy changes throughout your script.
 
 Next, let’s create the main variable from which we will do all of the Twittering. We will call it *api* and assign it a value from the *tweepy.API *method which takes a single authentication argument.
 
-    *api = tweepy.API(auth)*
+    api = tweepy.API(auth)
 
 Dope. We’re now able to ping the API with our bot account and use a variety of methods. Once this is working properly we can move forward by adding the code which checks for tweets that are favorited, and then retweets those tweets.
 
 To check my favorites all we have to do is call *api.favorites* using Tweepy. Because I typically favorite more than once per day we will need to write a for loop to loop over multiple tweets.
 
-    *for tweet in api.favorites(‘your_handle’):*
+    for tweet in api.favorites(‘your_handle’):
 
 You’ll notice this is where we want to add the username for our actual account. The one where your Twitter fingers go to work.
 
 Once the for loop has all of the tweets that our account favorited, we want to do something with them. In this case, we will retweet them from the bot account we granted API access to.
 
-    *for tweet in api.favorites(‘your_handle’):
-      api.retweet(tweet.id)*
+    for tweet in api.favorites(‘your_handle’):
+      api.retweet(tweet.id)
 
 And that’s it! We have a working Twitter bot. One thing I noticed after putting this together was that it worked flawlessly on the first go around, but upon running it again, it was error city. It turns out Tweepy will get a little confused if it has already retweeted a tweet.
 
 To create a workaround, I found on [StackOverflow](https://stackoverflow.com/questions/37145972/error-handling-errors-while-using-api-retweet-tweepy-3-5-python3) that I needed to add the following to my script to raise an exception (basically tell it, proceed no matter what!)
 
-    *for tweet in api.favorites(‘jman4190’):
+    for tweet in api.favorites(‘jman4190’):
       try:
         api.retweet(tweet.id)
       except tweepy.TweepError as e:
       # add here a more complex error handling
-      print(e)*
+      print(e)
 
 And voila! Now we have a working Twitter bot. Congrats!
-
-<iframe src="https://medium.com/media/997d809996a40bde8af44e460d25a8ef" frameborder=0></iframe>
 
     import tweepy
 
@@ -171,7 +167,7 @@ Go ahead and name your rule and provide a distinct description. From creating a 
 
 We are going to use the **schedule expression** rule type, and then in the mandatory *Schedule expression** box is where we will write in how often we want our event to fire. Since I am a Twitter addict, I decided to run my script on the hour. To do this, simply follow the example listed below the box and write the following
 
-    *rate(1 hour)*
+    rate(1 hour)
 
 Great, after creating the trigger you will be brought to the **Configure function** page.
 
@@ -193,8 +189,8 @@ But first, let’s jump back into our original code for a second to add one new 
 
 Simply add this line above the for loop and tab everything beneath it over once.
 
-    *def lambda_handler(event, context):
-    *    for tweet in api.favorites('jman4190'):
+    def lambda_handler(event, context):
+        for tweet in api.favorites('jman4190'):
             try:
                 api.retweet(tweet.id)
             except tweepy.TweepError as e:
@@ -205,11 +201,11 @@ Go ahead and save the updated file.
 
 Ok, now we need to create an isolated Python environment using the Virtualenv tool. Let’s head to the terminal again and create a virtual environment by running the following.
 
-    virtualenv *path/to/my/virtual-env*
+    virtualenv *path/to/my/virtual-env
 
 Then we activate the virtualenv with the following command
 
-    source  *path/to/my/virtual-env*/bin/activate
+    source  path/to/my/virtual-env*/bin/activate
 
 Next, we install the Tweepy module in our environment
 
@@ -233,7 +229,7 @@ On to the Lambda function handler and role. **Choose an existing role** and make
 
 Now, one last important caveat. For the Handler, make sure you name it the following
 
-    *your_python_script.lambda_handler*
+    your_python_script.lambda_handler
 
 This is where that magical line we added to the python script comes into play and probably why Amazon is taking over the world. I have no idea what it denotes, but it works.
 
@@ -245,7 +241,6 @@ One last watch out is if your code times out on the default 3 seconds, go ahead 
 
 And that my friends, is a Twitter bot. Now just sit back and favorite any tweet that catches your attention.
 
-<iframe src="https://medium.com/media/bdff1834dc43b94b4017faebc6e61d88" frameborder=0></iframe>
 
 *Before anyone treats this post like the gospel, please know that I am an extreme beginner and there is probably a bagillion different and better ways to do this. Please leave any feedback you may have or feel free to pass this along if you found it helpful.*
 
