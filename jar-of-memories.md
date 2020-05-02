@@ -58,15 +58,15 @@ A virtual environment is a copy of the Python interpreter into which you can ins
 
     $ mkdir memory_jar
 
-**Installing python 3.6.6 with pyenv
-**Navigate to the folder we just created and change Python to Python 3.6.6. Then verify it is the correct version with the — version command.
+**Installing python 3.6.6 with pyenv**
+Navigate to the folder we just created and change Python to Python 3.6.6. Then verify it is the correct version with the — version command.
 
     $ cd memory_jar
     $ pyenv shell 3.6.6
     $ python — version
 
-**Creating the virtual environment
-**We are going to call our virtual environment venv. The -m venv option runs the venv package from the standard library as a standalone script, passing the desired name as an argument.
+**Creating the virtual environment**
+We are going to call our virtual environment venv. The -m venv option runs the venv package from the standard library as a standalone script, passing the desired name as an argument.
 
 We will create a virtual environment inside the memory_jar directory. Again, you’ll see around the internet that most people use venv as the virtual environment folder name, but feel free to name it whatever. Make sure your current directory is set to memory_jar and run this command.
 
@@ -84,8 +84,8 @@ Again, the beauty of the virtual environment is that we can install all packages
 
 Pip is a package management system used to install and manage software packages written in Python. Since we are using Python 3.6.6, we don’t need to call pip3 since our environment is already using Python 3. Your terminal will tell you if the packages were successfully installed.
 
-**Downloading a Package
-**Downloading a package is very easy with pip. Simply go to your terminal and make sure you are in your virtual environment, then tell pip to download the package you want by typing the following:
+**Downloading a Package**
+Downloading a package is very easy with pip. Simply go to your terminal and make sure you are in your virtual environment, then tell pip to download the package you want by typing the following:
 
     $ pip install <package>
 
@@ -93,8 +93,8 @@ Now, let’s install the Twilio package.
 
     (venv) $ pip install twilio
 
-**Starting our script
-**Let’s go ahead and create our script file which we will call jar_button.py:
+**Starting our script**
+Let’s go ahead and create our script file which we will call jar_button.py:
 
     (venv) $ touch jar_button.py
 
@@ -115,13 +115,13 @@ Copy and paste these into your jar_button.py file and replace the account_sid an
     import twilio
     from twilio.rest import Client
 
-    *# Your Account Sid and Auth Token from twilio.com/console*
+    # Your Account Sid and Auth Token from twilio.com/console
     account_sid = ‘ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX’
     auth_token = ‘your_auth_token’
 
 We can now connect to Twilio with the following:
 
-    *# connect to Twilio*
+    # connect to Twilio
     client = Client(account_sid, auth_token)
 
 At this point we are ready to send text messages. We will be making an HTTP POST to Twilio’s Message resource. The Twilio library we imported makes it easy for us to create a new instance of the message resource where we include the To, From_ and Body parameters of our message.
@@ -140,12 +140,12 @@ Go ahead and test the script now to confirm you received the text message. Your 
     import twilio
     from twilio.rest import Client
 
-    *# Your Account Sid and Auth Token from twilio.com/console*
+    # Your Account Sid and Auth Token from twilio.com/console
     account_sid = ‘ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX’
     auth_token = ‘your_auth_token’
     client = Client(account_sid, auth_token)
 
-    *# send MMS*
+    # send MMS
     client.messages.create(
      to="+YOUR_NUMBER",
      from_="+TWILIO_NUMBER",
@@ -251,12 +251,12 @@ Now we’re going to update our Python script with the media_url parameter we re
 
 Take the object URL and paste it into your script. Then replace the jpg image filename with %s and reference the file variable which has an image filename saved in it. Save all of this to a media variable:
 
-    *# this is the url to an image file we’re going to send in the MMS*
+    # this is the url to an image file we’re going to send in the MMS
     media = (‘https://s3-us-west-1.amazonaws.com/memoryjarphotos/%s' % file)
 
 Then in the HTTP Post Request, we can set the media_url equal to media:
 
-    *# send MMS*
+    # send MMS
     client.messages.create(
      to="+YOUR_NUMBER",
      from_="+TWILIO_NUMBER",
@@ -296,8 +296,6 @@ When ready, download the connection kit file by clicking the **Linux/OSX** blue 
 ![](https://cdn-images-1.medium.com/max/3200/0*LPX0WH2y7QS3AVGG)
 
 It should go directly to your chrome downloads if you are using chrome. By the way, if you are using chrome, you may find this video funny…
-
-<iframe src="https://medium.com/media/3b71f662261a0a3a787bf66a4ca960df" frameborder=0></iframe>
 
 Back to our regular scheduled programming. You should see the zip file in your downloads.
 
@@ -369,13 +367,13 @@ With all the code below it selected, tab over once. Your final code should look 
     from twilio.rest import Client
     import random
 
-    *# Your Account Sid and Auth Token from twilio.com/console*
+    # Your Account Sid and Auth Token from twilio.com/console
     account_sid = “AXXXXXXXXXXXXXXXXXXXXXXXXXX”
     auth_token = “YOUR_AUTH_TOKEN”
     client = Client(account_sid, auth_token)
 
     def lambda_handler(event, context):
-     *# update with new file names here after adding them to s3 bucket*
+     # update with new file names here after adding them to s3 bucket
      memories = [‘IMG_0021.jpg’, 
      ‘IMG_00231.jpg’,
      ‘IMG_0285.jpg’,
@@ -389,10 +387,10 @@ With all the code below it selected, tab over once. Your final code should look 
 
      file = random.choice(memories)
 
-     *# this is the URL to an image file we’re going to send in the MMS*
+     # this is the URL to an image file we’re going to send in the MMS
      media = (‘https://s3-us-west-1.amazonaws.com/memoryjar/%s' % file)
      
-     *# send MMS*
+     # send MMS
      client.messages.create(
      to=”+YOUR_NUMBER”,
      from_=”+TWILIO_NUMBER”,
