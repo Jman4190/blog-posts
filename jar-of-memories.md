@@ -53,12 +53,14 @@ We also need to install it at the global level to make sure our shell knows we w
 
 A virtual environment is a copy of the Python interpreter into which you can install packages privately, without affecting the global Python interpreter installed in your system. Your future self will thank you for using a virtual environment whenever possible. It helps to keep code contained and make it more replicable since all the dependencies and site packages are in one place. People set up virtual environments numerous ways, but here are the commands I personally follow:
 
-**Creating a new project folder
-**Let’s call ours memory_jar:
+**Creating a new project folder**
+
+Let’s call ours memory_jar:
 
     $ mkdir memory_jar
 
 **Installing python 3.6.6 with pyenv**
+
 Navigate to the folder we just created and change Python to Python 3.6.6. Then verify it is the correct version with the — version command.
 
     $ cd memory_jar
@@ -66,6 +68,7 @@ Navigate to the folder we just created and change Python to Python 3.6.6. Then v
     $ python — version
 
 **Creating the virtual environment**
+
 We are going to call our virtual environment venv. The -m venv option runs the venv package from the standard library as a standalone script, passing the desired name as an argument.
 
 We will create a virtual environment inside the memory_jar directory. Again, you’ll see around the internet that most people use venv as the virtual environment folder name, but feel free to name it whatever. Make sure your current directory is set to memory_jar and run this command.
@@ -85,6 +88,7 @@ Again, the beauty of the virtual environment is that we can install all packages
 Pip is a package management system used to install and manage software packages written in Python. Since we are using Python 3.6.6, we don’t need to call pip3 since our environment is already using Python 3. Your terminal will tell you if the packages were successfully installed.
 
 **Downloading a Package**
+
 Downloading a package is very easy with pip. Simply go to your terminal and make sure you are in your virtual environment, then tell pip to download the package you want by typing the following:
 
     $ pip install <package>
@@ -94,6 +98,7 @@ Now, let’s install the Twilio package.
     (venv) $ pip install twilio
 
 **Starting our script**
+
 Let’s go ahead and create our script file which we will call jar_button.py:
 
     (venv) $ touch jar_button.py
@@ -417,8 +422,6 @@ The first will change your working directory to the site-packages and the second
 ![](https://cdn-images-1.medium.com/max/3200/0*9dJI6m1xV2udIHTl)
 
 ## Push button and enjoy
-
-![](https://cdn-images-1.medium.com/max/2134/1*D0XyuBFKIF0Hfhs-lbzRTQ.gif)
 
 And there you have it. A button that sends photo memories to your phone. If you have any issues, feel free to drop me a line in the comments and I’ll do my best to answer in a timely manner.
 
